@@ -13,6 +13,8 @@ assert(vm.runInContext("directoryResults('diabetes').length",ctx)>20);
 assert(vm.runInContext("directoryResults('EDS').some(e=>e.name.toLowerCase().includes('ehlers'))",ctx));
 assert(vm.runInContext("didYouMean('diabtes').includes('Diabetes')",ctx));
 assert.equal(vm.runInContext("normalizeQuery('tired')",ctx),'fatigue');
+assert.equal(vm.runInContext("normalizeQuery('heart failure')",ctx),'heart failure');
+assert.equal(vm.runInContext("directoryResults('heart failure')[0].name",ctx),'Heart Failure');
 assert(vm.runInContext("textParagraphs('First paragraph\\n\\nSecond paragraph').includes('</p><p>')",ctx));
 assert(vm.runInContext("textParagraphs('<script>alert(1)</script>').includes('&lt;script&gt;')",ctx));
 assert(vm.runInContext("directoryArticle(directoryResults('lupus')[0].id,true).includes('Treatments and Therapies')",ctx));
