@@ -1,0 +1,16 @@
+{
+  "retrieved": "2026-10-25",
+  "medlineSnapshot": "10/24/2026 02:30:36",
+  "gardSnapshot": "September 2026",
+  "sourceCounts": {
+    "healthTopics": 1017,
+    "geneticSummaries": 1305,
+    "gardRecords": 16214
+  },
+  "entryCount": 20290,
+  "summaryCount": 2248,
+  "resourceCount": 35913,
+  "encyclopediaArticleCount": 3073,
+  "withDiseasePage": 6265,
+  "mergePolicy": "Exact normalized titles merged; synonyms retained. Counts are directory entries, not unique diagnoses. Subtypes, tests, symptoms and wellness topics are included."
+}
