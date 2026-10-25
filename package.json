@@ -1,0 +1,14 @@
+{
+  "name": "prognos",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Source-backed medical information and care navigation app.",
+  "scripts": {
+    "build": "node scripts/build.mjs",
+    "check": "node scripts/build.mjs --check-only",
+    "dev": "python3 -m http.server 8765 --directory dist"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}
