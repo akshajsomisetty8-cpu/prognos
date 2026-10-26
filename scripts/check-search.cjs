@@ -1,0 +1,28 @@
+const fs=require('node:fs'),vm=require('node:vm'),assert=require('node:assert/strict');
+const element=()=>({innerHTML:'',dataset:{},style:{setProperty(){}},classList:{toggle(){}},scrollIntoView(){}}),nodes=new Map(),storage=new Map();
+const ctx={console,location:{hash:'#library'},document:{querySelector:s=>{if(!nodes.has(s))nodes.set(s,element());return nodes.get(s)},querySelectorAll:()=>[],body:element()},window:{addEventListener(){},scrollTo(){}},navigator:{onLine:true},localStorage:{getItem:k=>storage.get(k)||null,setItem:(k,v)=>storage.set(k,v)},setTimeout,clearTimeout,fetch:()=>Promise.reject(Error('Unexpected fetch'))};
+vm.createContext(ctx);for(const f of ['data.js','app.js','directory-index.js','directory.js','comfort.js','search.js'])vm.runInContext(fs.readFileSync(__dirname+'/../dist/'+f,'utf8'),ctx);
+ctx.details=JSON.parse(fs.readFileSync(__dirname+'/../dist/directory-details.json','utf8'));const run=s=>vm.runInContext(s,ctx);run('dirDetails=details');
+for(const q of ['knee pain','i have knee pain','my knee hurts',"I'm having pain in my knee",'my left knee hurts for two days']){ctx.q=q;assert.equal(run('normalizeQuery(q)'),'knee pain',q);assert.equal(run('directoryResults(q)[0].name'),'Knee pain',q)}
+assert.equal(run("directoryResults('I feel anxious')[0].name"),'Anxiety');
+assert.equal(run("directoryResults('I am tired')[0].name"),'Fatigue');
+assert(run("directoryResults('anxiety').slice(0,12).some(e=>e.name==='Depression')"));
+assert(run("directoryResults('anxiety').slice(0,12).some(e=>e.name==='Fatigue')"));
+assert(run("!directoryResults('anxiety').some(e=>/nystagmus/i.test(e.name))"));
+assert(run("directoryResults('x-linked infantile nystagmus').some(e=>/nystagmus/i.test(e.name))"));
+assert(run("directoryResults('knee pain').slice(0,2).some(e=>e.name==='Knee Injuries and Disorders')"));
+assert(run("directoryResults('EDS').some(e=>/ehlers/i.test(e.name))"));
+assert(run("educationalResults('anxiety',{mode:'all'}).length>=educationalResults('anxiety',{mode:'general'}).length"));
+assert(run("library('i have knee pain').includes('Knee pain: understand the symptom first')"));
+assert(run("library('anxiety').includes('National Institute of Mental Health')"));
+assert(run("directoryArticle(directoryResults('knee pain')[0].id).includes('C. Benjamin Ma, MD')"));
+run("dirState.group='Rare Diseases'");assert(run("directoryResults('knee pain').every(e=>e.groups.includes('Rare Diseases'))"));assert(run("educationalResults('knee pain',{filters:false}).length>0"));
+run("searchGo('i have knee pain')");assert.equal(run('dirState.group'),'');
+assert.equal(run("normalizeQuery('heart failure')"),'heart failure');
+assert.equal(run("normalizeQuery('multiple sclerosis')"),'multiple sclerosis');
+assert(run("didYouMean(normalizeQuery('i have diabtes')).length===0 || directoryResults('i have diabtes').length>0"));
+assert(run("library('<img src=x onerror=alert(1)>').includes('&lt;img')"));
+assert(run("!directoryResults('knee pain').some(e=>e.name==='Gout'||e.name==='Bone Cancer')"));
+assert(run("educationalResults('knee pain',{mode:'all'}).some(e=>e.name==='Gout')"));
+assert(run("didYouMean('i have migrain').some(n=>/migraine/i.test(n))"));
+console.log('PASS: conversational symptoms, duration/laterality, common-topic ranking, rare-name retrieval, general/full modes, symptom-first explanations, source credentials, filters and HTML escaping.');
