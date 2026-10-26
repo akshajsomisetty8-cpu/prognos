@@ -36,5 +36,11 @@
         }
       ]
     }
-  ]
+  ],
+  "functions": {
+    "api/consultant.js": {
+      "includeFiles": "server/**",
+      "maxDuration": 30
+    }
+  }
 }

@@ -3,6 +3,7 @@ import { constants } from "node:fs";
 import { spawnSync } from "node:child_process";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import './build-evidence.mjs';
 
 const projectRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const distDir = path.join(projectRoot, "dist");
@@ -25,7 +26,7 @@ const requiredFiles = [
   "models/atlas.json"
 ];
 
-const checkedScripts = ["app.js", "data.js", "directory-index.js", "directory.js", "sw.js", "anatomy.js"];
+const checkedScripts = ["app.js", "data.js", "directory-index.js", "directory.js", "sw.js", "anatomy.js", "comfort.js", "search.js", "consultant.js"];
 const checkedJson = ["directory-details.json", "library-provenance.json", "manifest.json", "models/atlas.json"];
 
 for (const relativePath of requiredFiles) {
@@ -48,7 +49,7 @@ for (const relativePath of checkedJson) {
 
 const indexHtml = await readFile(path.join(distDir, "index.html"), "utf8");
 for (const script of ["app.js", "directory-index.js", "directory.js"]) {
-  if (!indexHtml.includes(`src=\"${script}\"`)) {
+  if (!indexHtml.includes(`src=\"${script}\"`) && !indexHtml.includes(`src=\"${script}?`)) {
     throw new Error(`index.html does not load ${script}`);
   }
 }
